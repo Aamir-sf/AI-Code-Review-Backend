@@ -5,8 +5,20 @@ const cors = require('cors');
 const app = express();
 
 // ✅ CORS setup for frontend
+const allowedOrigins = [
+  "https://ai-code-review-lake.vercel.app", // live frontend
+  "http://localhost:5173"                  // local frontend
+];
+
 const corsOptions = {
-  origin: "https://ai-code-review-lake.vercel.app", // frontend URL
+  origin: function(origin, callback){
+    // agar origin undefined (Postman ya curl) ya allowed hai
+    if(!origin || allowedOrigins.indexOf(origin) !== -1){
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST"],
   credentials: true,
 };
