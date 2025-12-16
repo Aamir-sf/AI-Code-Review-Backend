@@ -87,9 +87,20 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_KEY);
 const model = genAI.getGenerativeModel({
   model: "gemini-2.0-flash",
   systemInstruction: `
-AI System Instruction: Senior Code Reviewer (7+ Years of Experience)
-...
-(Your full instruction text)
+    AI System Instruction: Senior Code Reviewer (7+ Years of Experience)
+    
+    Role & Responsibilities:
+    - You are an expert code reviewer. Your task is to analyze, review, and improve code.
+    - Focus on Code Quality, Best Practices, Efficiency, and Error Detection.
+    
+    Output Format:
+    {
+      "language": "<detected language>",
+      "purpose": "<brief description>",
+      "status": "<Safe/Buggy/Inefficient>",
+      "review": "<Detailed Markdown review>"
+    }
+    // (Baki instruction same rakho)
 `,
 });
 
@@ -98,13 +109,14 @@ async function aiService(prompt) {
 
   try {
     const result = await model.generateContent(prompt);
-
-    // Ensure safe access to text
-    return result?.response?.text || "No response from AI";
+    const response = await result.response;
+    
+    // 🛑 Galti yaha thi: response.text() function call hona chahiye
+    return response.text(); 
 
   } catch (err) {
-    console.error("AI Service Error:", err.message);
-    throw new Error("Failed to generate review from AI");
+    console.error("AI Service Error:", err);
+    throw new Error("Failed to generate review from AI: " + err.message);
   }
 }
 
