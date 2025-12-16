@@ -1,19 +1,27 @@
-const express = require ('express');
-const aiRoutes = require('./routes/ai.routes')
-const cors = require('cors')
+const express = require('express');
+const aiRoutes = require('./routes/ai.routes');
+const cors = require('cors');
 
-const app = express()
+const app = express();
 
-app.use(cors())
+// ✅ CORS setup for frontend
+const corsOptions = {
+  origin: "https://ai-code-review-lake.vercel.app", // frontend URL
+  methods: ["GET", "POST"],
+  credentials: true,
+};
 
-app.use(express.json())
+app.use(cors(corsOptions));
 
-app.get('/',(req, res)=>{
-    res.send('hello world')
-})
+// Body parser
+app.use(express.json());
 
-app.use('/ai', aiRoutes)
+// Test route
+app.get('/', (req, res) => {
+  res.send('hello world');
+});
 
-module.exports =  app
+// AI routes
+app.use('/ai', aiRoutes);
 
-
+module.exports = app;
