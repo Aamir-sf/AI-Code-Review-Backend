@@ -18,8 +18,14 @@ app.use(express.json());
 
 // Test route
 app.get('/', (req, res) => {
-  res.send('hello world');
+  try {
+    res.send('hello world');
+  } catch (err) {
+    console.error("GET / error:", err);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
 
 // AI routes
 app.use('/ai', aiRoutes);
