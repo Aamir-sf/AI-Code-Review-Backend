@@ -1,33 +1,23 @@
 const express = require('express');
-const aiRoutes = require('./routes/ai.routes');
 const cors = require('cors');
+const aiRoutes = require('./routes/ai.routes'); // Path check karlein
 
 const app = express();
 
-// ✅ CORS setup
-const allowedOrigins = [
-  "https://ai-code-review-lake.vercel.app", // live frontend
-  "http://localhost:5173"                  // local frontend
-];
+// ✅ CORS ko simple rakhein (Taaki block na ho)
+app.use(cors());
 
-app.use(cors({
-  origin: function(origin, callback){
-    if(!origin || allowedOrigins.indexOf(origin) !== -1){
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST"],
-  credentials: true,
-}));
-
+// ✅ JSON body parser (Zaroori hai)
 app.use(express.json());
 
-// Test route
-app.get('/', (req,res) => res.send('hello world'));
-
-// AI routes
+// Routes
+app.get('/', (req, res) => res.send('Server is live!'));
 app.use('/ai', aiRoutes);
+
+// Server listen (Vercel ke liye iski zaroorat nahi hoti but local ke liye thik hai)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 module.exports = app;

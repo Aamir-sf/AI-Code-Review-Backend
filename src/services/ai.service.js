@@ -83,25 +83,16 @@
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
+// Environment variable ka naam Vercel Settings se match hona chahiye
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_KEY);
+
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
   systemInstruction: `
     AI System Instruction: Senior Code Reviewer (7+ Years of Experience)
-    
-    Role & Responsibilities:
-    - You are an expert code reviewer. Your task is to analyze, review, and improve code.
-    - Focus on Code Quality, Best Practices, Efficiency, and Error Detection.
-    
-    Output Format:
-    {
-      "language": "<detected language>",
-      "purpose": "<brief description>",
-      "status": "<Safe/Buggy/Inefficient>",
-      "review": "<Detailed Markdown review>"
-    }
-    // (Baki instruction same rakho)
-`,
+    Role: Analyze code and provide a review in JSON format.
+    Output: { "language": "...", "purpose": "...", "status": "...", "review": "Markdown format" }
+  `,
 });
 
 async function aiService(prompt) {
@@ -110,12 +101,11 @@ async function aiService(prompt) {
   try {
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    
-    // 🛑 Galti yaha thi: response.text() function call hona chahiye
+    // response.text() function call hai, use () ke sath likhein
     return response.text(); 
 
   } catch (err) {
-    console.error("AI Service Error:", err);
+    console.error("AI Service Error:", err.message);
     throw new Error("Failed to generate review from AI: " + err.message);
   }
 }
